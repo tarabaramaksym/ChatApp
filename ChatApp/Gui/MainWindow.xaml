@@ -1,0 +1,33 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChatApp.Gui"
+        xmlns:fa="http://schemas.fontawesome.io/icons/" x:Class="ChatApp.Gui.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow" WindowStyle="None" Height="557.124" Width="874.598">
+    <Window.Resources>
+        <Style x:Key="TextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#F0F0F0"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <local:WindowBarControl Grid.ColumnSpan="2" Background="#0AB2B0"/>
+
+        <ContentControl x:Name="ContentArea" Grid.Row="1">
+            <local:LoginControl></local:LoginControl>
+        </ContentControl>
+
+
+    </Grid>
+</Window>

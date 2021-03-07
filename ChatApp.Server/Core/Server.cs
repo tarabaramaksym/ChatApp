@@ -13,8 +13,6 @@ namespace ChatApp.Server.Core
 {
     public class Server
     {
-        // TODO UserInfo Class (Socket, target username, username)
-        // TODO ServerRequest class
         Commands _commands;
         
         public Server()
@@ -30,30 +28,39 @@ namespace ChatApp.Server.Core
                 {
                     while (true)
                     {
-                        byte[] bytes = new Byte[1024];
-                        int bytesRec = handler.Receive(bytes);
-                        MessageToServer receivedMessage = MessageToServer.DecodeMessage(bytes);
+                        try { 
+                            byte[] bytes = new Byte[1024];
+                            int bytesRec = handler.Receive(bytes);
+                            MessageToServer receivedMessage = MessageToServer.DecodeMessage(bytes);
 
-                        switch (receivedMessage.Command)
+                            switch (receivedMessage.Command)
+                            {
+                                case CommandToServer.ASK_AUTHORIZATION:
+                                    _commands.Authorize(receivedMessage, handler);
+                                    break;
+                                case CommandToServer.ASK_REGISTRATION:
+                                    _commands.Register(receivedMessage, handler);
+                                    break;
+                                case CommandToServer.SEND_MESSAGE:
+                                    _commands.SendMessage(receivedMessage, handler);
+                                    break;
+                                case CommandToServer.GET_CONTACTS:
+                                    _commands.GetContacts(receivedMessage, handler);
+                                    break;
+                                case CommandToServer.SEARCH_CONTACTS:
+                                    _commands.SearchContacts(receivedMessage, handler);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        catch (Exception)
                         {
-                            case CommandToServer.ASK_AUTHORIZATION:
-                                _commands.Authorize(receivedMessage, handler);
-                                break;
-                            case CommandToServer.ASK_REGISTRATION:
-                                _commands.Register(receivedMessage, handler);
-                                break;
-                            case CommandToServer.SEND_MESSAGE:
-                                _commands.SendMessage(receivedMessage, handler);
-                                break;
-                            case CommandToServer.GET_CONTACTS:
-                                _commands.GetContacts(receivedMessage, handler);
-                                break;
-                            default:
-                                break;
+
                         }
                     }
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                     // user disconnected?
                 }
@@ -79,19 +86,26 @@ namespace ChatApp.Server.Core
                 // Start listening
                 while (true)
                 {
-                    Socket handler = listener.Accept();
-                    Console.WriteLine("{0} :: CONNECTED", handler.RemoteEndPoint);
-                    StartReceiving(handler);
+                    try
+                    {
+                        Socket handler = listener.Accept();
+                        Console.WriteLine("{0} :: CONNECTED", handler.RemoteEndPoint);
+                        StartReceiving(handler);
 
-                    // TODO: handle disconnect
-                    //handler.Shutdown(SocketShutdown.Both);
-                    // handler.Close();
+                        // TODO: handle disconnect
+                        //handler.Shutdown(SocketShutdown.Both);
+                        // handler.Close();
+                    }
+                    catch (Exception)
+                    {
+                        //Console.WriteLine(e.ToString());
+                    }
                 }
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.ToString());
+                //Console.WriteLine(e.ToString());
             }
         }
     }

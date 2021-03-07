@@ -1,6 +1,7 @@
 ﻿using ChatApp.Gui;
 using ChatApp.Networking;
 using ChatApp.SharedLib.Enums;
+using ChatApp.SharedLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,30 +14,32 @@ namespace ChatApp.Logic
 {
     public static class Contacts
     {
-        internal static void FillContacts(Panel pnl,int id)
-        {
-            List<(string, ContactStatus)> list = Client.Request.Contacts(id);
 
-            foreach((string,ContactStatus) item in list)
+        static List<Contact> _yourContacts;
+
+        internal static void FillContacts(Panel pnl)
+        {
+            _yourContacts = Client.Request.Contacts(UserInfo.Id);
+            foreach (Contact item in _yourContacts)
             {
                 ContactControl contact = new ContactControl();
-                contact.NameTextBlock.Text = item.Item1;
-                switch (item.Item2)
-                {
-                    case ContactStatus.ACCEPTED: contact.MainGrid.Background = Brushes.Green;
-                        break;
-                    case ContactStatus.REQUESTS_TO_YOU:
-                        contact.MainGrid.Background = Brushes.Yellow;
-                        break;
-                    case ContactStatus.YOUR_REQUESTS:
-                        contact.MainGrid.Background = Brushes.Red;
-                        break;
-                    default:
-                        break;
-                }
+                contact.NameTextBlock.Text = item.Name;
+                contact.NameTextBlock.Tag = item.Username;
+                pnl.Children.Add(contact);
+            }  
+        }
+
+        internal static void SearchContacts(Panel pnl,string search)
+        {
+            List<Contact> searchResult = Client.Request.SearchContacts(search);
+            foreach (Contact item in searchResult)
+            {
+                ContactControl contact = new ContactControl();
+                contact.NameTextBlock.Text = item.Name;
+                contact.NameTextBlock.Tag = item.Username;
                 pnl.Children.Add(contact);
             }
-            
         }
+
     }
 }

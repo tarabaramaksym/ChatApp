@@ -24,7 +24,7 @@ namespace ChatApp.Data.MicrosoftSQLServer
         public List<T> SelectAll<T>() where T : IModel, new()
         {
             T obj = new T();
-            string sql = "SELECT * FROM " + obj.GetTableName();
+            var sql = "SELECT * FROM " + obj.GetTableName();
             _command = new SqlCommand(sql, _connection);
             _reader = _command.ExecuteReader();
 
@@ -40,7 +40,7 @@ namespace ChatApp.Data.MicrosoftSQLServer
         public User SelectOneUser(string username)
         {
             // TODO htmlspecialchar to protect from injections
-            string sql = "SELECT * FROM Users WHERE Username = '" + username + "'";
+            var sql = "SELECT * FROM Users WHERE Username = '" + username + "'";
             _command = new SqlCommand(sql, _connection);
             _reader = _command.ExecuteReader();
             User user = _reader.Read() ? 
@@ -63,30 +63,69 @@ namespace ChatApp.Data.MicrosoftSQLServer
             string sql = model.GetInsert();
             _command = new SqlCommand(sql, _connection);
             _reader = _command.ExecuteReader();
+            _reader.Close();
             return true;
         }
 
-        public List<(string,ContactStatus)> SelectContacts(int id)
+        public List<SharedLib.Models.Contact> SelectContacts(int id)
         {
-            List<(string, ContactStatus)> contacts = new List<(string, ContactStatus)>();
+            List<SharedLib.Models.Contact> contacts = new List<SharedLib.Models.Contact>();
 
-            string yourRequestsSQL = $"SELECT u.Username FROM Contacts LEFT JOIN Users u ON u.Id = SenderId WHERE SenderId = {id} AND Accepted = 0";
-            string requestsToYouSQL = $"SELECT u.Username FROM Contacts LEFT JOIN Users u ON u.Id = ReceiverId WHERE ReceiverId = {id} AND Accepted = 0";
-            string acceptedContactsSQL = $"SELECT u.Username FROM Contacts LEFT JOIN Users u ON u.Id = ReceiverId WHERE (ReceiverId = {id} OR SenderId = {id}) AND Accepted = 1";
+            var yourRequestsSQL = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = ReceiverId WHERE SenderId = {id} AND Accepted = 0";
+            var requestsToYouSQL = $"SELECT  u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = SenderId WHERE ReceiverId = {id} AND Accepted = 0";
+            var acceptedContactsSQL = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = ReceiverId WHERE SenderId = {id} AND Accepted = 1";
 
             GetContacts(yourRequestsSQL, ContactStatus.YOUR_REQUESTS, ref contacts);
             GetContacts(requestsToYouSQL, ContactStatus.REQUESTS_TO_YOU, ref contacts);
             GetContacts(acceptedContactsSQL, ContactStatus.ACCEPTED, ref contacts);
+            acceptedContactsSQL = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = SenderId WHERE ReceiverId = {id} AND Accepted = 1";
+            GetContacts(acceptedContactsSQL, ContactStatus.ACCEPTED, ref contacts);
 
             return contacts;
         }
-        private void GetContacts(string sql,ContactStatus status, ref List<(string, ContactStatus)> contacts)
+
+        private void GetContacts(string sql,ContactStatus status, ref List<SharedLib.Models.Contact> contacts)
         {
             _command = new SqlCommand(sql, _connection);
             _reader = _command.ExecuteReader();
             while (_reader.Read())
-                contacts.Add((_reader.GetString(_reader.GetOrdinal("Username")),status));
+            {
+                var c = new SharedLib.Models.Contact();
+                c.ParseSqlReader(_reader);
+                contacts.Add(c);
+            }
+                
             _reader.Close();
+        }
+
+        public List<SharedLib.Models.Contact> SearchUsers(string name)
+        {
+            List<SharedLib.Models.Contact> contacts = new List<SharedLib.Models.Contact>();
+            var sql = $"SELECT * FROM Users WHERE Username like '%{name}%' OR Name like '%{name}%'";
+            _command = new SqlCommand(sql, _connection);
+            _reader = _command.ExecuteReader();
+            while (_reader.Read())
+            {
+                var c = new SharedLib.Models.Contact();
+                c.ParseSqlReader(_reader);
+                contacts.Add(c);
+            }
+            _reader.Close();
+            return contacts;
+        }
+
+        public T SelectOne<T>(int id) where T : IModel, new()
+        {
+            T obj = new T();
+            var sql = $"SELECT * FROM {new T().GetTableName()} WHERE Id = {id}";
+            _command = new SqlCommand(sql, _connection);
+            _reader = _command.ExecuteReader();
+            if (_reader.Read())
+            {
+                obj.ParseSqlReader(_reader);
+            }
+            _reader.Close();
+            return obj;
         }
 
         private bool _disposed = false;
@@ -103,5 +142,9 @@ namespace ChatApp.Data.MicrosoftSQLServer
             }
             _disposed = true;
         }
+
+        
+
+        
     }
 }

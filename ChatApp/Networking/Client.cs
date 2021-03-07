@@ -36,7 +36,14 @@ namespace ChatApp.Networking
                 byte[] bytes = new byte[1024];
                 while (true)
                 {
-                    int bytesRec = _sender.Receive(bytes);
+                    try
+                    {
+                        int bytesRec = _sender.Receive(bytes);
+                    }
+                    catch(Exception)
+                    {
+
+                    }
                     //Console.WriteLine(Encoding.UTF8.GetString(bytes, 0, bytesRec));
                    
                 }
@@ -61,21 +68,21 @@ namespace ChatApp.Networking
                     _sender.Connect(_remoteEP);
                     // TODO implement logging?
                 }
-                catch (ArgumentNullException ane)
+                catch (ArgumentNullException)
                 {
                     //Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
                 }
-                catch (SocketException se)
+                catch (SocketException)
                 {
                     //Console.WriteLine("SocketException : {0}", se.ToString());
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // Console.WriteLine("Unexpected exception : {0}", e.ToString());
                 }
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Console.WriteLine(e.ToString());
             }

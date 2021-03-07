@@ -27,6 +27,17 @@ namespace ChatApp.Gui
         }
         private bool _selected;
 
+        public bool Selected { set
+            {
+                _selected = value;
+                if(_selected)
+                    MainGrid.Background = new SolidColorBrush(Color.FromRgb(32, 74, 78));
+                else
+                    MainGrid.Background = Brushes.Transparent;
+
+            }
+        }
+
         private void Grid_MouseEnter(object sender, MouseEventArgs e) {
             if (!_selected)
                 MainGrid.Background = new SolidColorBrush(Color.FromRgb(32, 74, 78));
@@ -35,12 +46,12 @@ namespace ChatApp.Gui
         private void Grid_MouseLeave(object sender, MouseEventArgs e)
         {
             if (!_selected)
-                MainGrid.Background = new SolidColorBrush(Color.FromRgb(38, 52, 57));                   
+                MainGrid.Background = Brushes.Transparent;
         }
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        /*private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            _selected = true;
-            MainGrid.Background = new SolidColorBrush(Color.FromRgb(32, 74, 78));
-        }
+            Selected = true;
+            Main*Grid.Background = new SolidColorBrush(Color.FromRgb(32, 74, 78));
+        }*/
     }
 }

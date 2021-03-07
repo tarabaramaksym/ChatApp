@@ -21,27 +21,65 @@ namespace ChatApp.Gui
     /// </summary>
     public partial class MainChatControl : UserControl
     {
-
-        List<ContactControl> contacts = new List<ContactControl>();
-        public int Id { get; set; }
+        ContactControl selected;
         public MainChatControl()
         {
             InitializeComponent();
-
-
-            // seed
-            ContactControl control = new ContactControl();
-            control.NameTextBlock.Text = "John Doe";
-            ContactsStackPanel.Children.Add(control);
-            control = new ContactControl();
-            ContactsStackPanel.Children.Add(control);
-            control.NameTextBlock.Text = "Jane Doe";
-            
+            selected = new ContactControl();
+            SearchTextBox.TextChanged += SearchTextBox_TextChanged;
         }
 
         private void ContactsStackPanel_Loaded(object sender, RoutedEventArgs e)
         {
-            Contacts.FillContacts(sender as StackPanel,Id);
+            Contacts.FillContacts(sender as StackPanel);
+        }
+
+        private void ContactsStackPanel_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ContactControl control = e.Source as ContactControl;
+            if(control != null && selected != control)
+            {
+                // TODO: Load messages
+                selected.Selected = false;
+                control.Selected = true;
+                selected = control;
+                NameTextBlock.Text = selected.NameTextBlock.Text;
+            }
+        }
+
+        private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if(SearchTextBox.Text == "Search")
+            {
+                // TODO: If you are going to type search it's going to delete it on click.
+                // Simple but pretty bad solution is to always remove text on GotFocus including when you already typed something.
+                SearchTextBox.Text = "";
+            }
+        }
+
+        private void SearchTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (SearchTextBox.Text == "")
+            {
+                SearchTextBox.Text = "Search";
+            }
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(SearchTextBox.Text != "" && SearchTextBox.Text != "Search")
+            {
+                SearchContactsScrollViewer.Visibility = Visibility.Visible;
+                YourContactsScrollViewer.Visibility = Visibility.Hidden;
+                SearchContactsStackPanel.Children.Clear();
+                Contacts.SearchContacts(SearchContactsStackPanel,SearchTextBox.Text);
+            }
+            else
+            {
+                SearchContactsScrollViewer.Visibility = Visibility.Hidden;
+                SearchContactsStackPanel.Children.Clear();
+                YourContactsScrollViewer.Visibility = Visibility.Visible;
+            }
         }
     }
 }

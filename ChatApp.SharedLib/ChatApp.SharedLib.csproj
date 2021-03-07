@@ -46,6 +46,7 @@
     <Compile Include="Enums\ContactStatus.cs" />
     <Compile Include="Messages\MessageFromServer.cs" />
     <Compile Include="Messages\MessageToServer.cs" />
+    <Compile Include="Models\Contact.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

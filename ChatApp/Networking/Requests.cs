@@ -1,5 +1,7 @@
-﻿using ChatApp.SharedLib.Enums;
+﻿using ChatApp.Logic;
+using ChatApp.SharedLib.Enums;
 using ChatApp.SharedLib.Messages;
+using ChatApp.SharedLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +33,16 @@ namespace ChatApp.Networking
             _sender.Receive(bytes);
             MessageFromServer received = MessageFromServer.DecodeMessage(bytes);
             if (received.Command == CommandFromServer.ACCEPTED)
+            {
+                UserInfo.Id = received.Id;
+                UserInfo.Name = received.Name;
+                UserInfo.Username = username;
                 return true;
+            }
             else
+            {
                 return false;
+            }
         }
 
         public bool Registration(string username, string password)
@@ -50,12 +59,20 @@ namespace ChatApp.Networking
             _sender.Receive(bytes);
             MessageFromServer received = MessageFromServer.DecodeMessage(bytes);
             if (received.Command == CommandFromServer.ACCEPTED)
+            {
+                UserInfo.Id = received.Id;
+                UserInfo.Name = received.Name;
+                UserInfo.Username = username;
                 return true;
+            }
             else
+            {
                 return false;
+            }
+                
         }
 
-        public List<(string, ContactStatus)> Contacts(int id)
+        public List<Contact> Contacts(int id)
         {
             MessageToServer message = new MessageToServer
             {
@@ -67,7 +84,21 @@ namespace ChatApp.Networking
             bytes = new byte[1024];
             _sender.Receive(bytes);
             MessageFromServer received = MessageFromServer.DecodeMessage(bytes);
-            return received.Usernames;
+            return received.Users;
+        }
+        public List<Contact> SearchContacts(string search)
+        {
+            MessageToServer message = new MessageToServer
+            {
+                Command = CommandToServer.SEARCH_CONTACTS,
+                Name = search
+            };
+            byte[] bytes = message.EncodeMessage();
+            _sender.Send(bytes);
+            bytes = new byte[1024];
+            _sender.Receive(bytes);
+            MessageFromServer received = MessageFromServer.DecodeMessage(bytes);
+            return received.Users;
         }
     }
 }

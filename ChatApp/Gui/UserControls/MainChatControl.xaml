@@ -15,7 +15,7 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="190"></ColumnDefinition>
+            <ColumnDefinition Width="210"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -30,12 +30,14 @@
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
             <Grid>
-                <TextBox Foreground="#F0F0F0" Padding="20,10,5,5" BorderBrush="{x:Null}" Height="40" Margin="10, 20,10,10" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Background="#0AB2B0"/>
-                <fa:ImageAwesome Foreground="#F0F0F0" Icon="Search" HorizontalAlignment="Left" Height="14" Margin="16,31,0,0" VerticalAlignment="Top" Width="14"/>
+                <TextBox x:Name="SearchTextBox" GotFocus="SearchTextBox_GotFocus" LostFocus="SearchTextBox_LostFocus" Foreground="#F0F0F0" Padding="25,10,5,5" BorderBrush="{x:Null}" Height="40" Margin="10, 20,10,20" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Background="#3B4147"/>
+                <fa:ImageAwesome Foreground="#F0F0F0" Icon="Search" HorizontalAlignment="Left" Height="14" Margin="16,32,0,0" VerticalAlignment="Top" Width="14"/>
             </Grid>
-            <ScrollViewer  VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch"  Grid.Row="1" VerticalAlignment="Stretch">
-                <StackPanel Loaded="ContactsStackPanel_Loaded" x:Name="ContactsStackPanel"/>
-
+            <ScrollViewer  Name="YourContactsScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch"  Grid.Row="1" VerticalAlignment="Stretch">
+                <StackPanel Loaded="ContactsStackPanel_Loaded" x:Name="ContactsStackPanel" local:ContactControl.MouseDown="ContactsStackPanel_MouseDown"/>
+            </ScrollViewer>
+            <ScrollViewer Visibility="Hidden" Name="SearchContactsScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch"  Grid.Row="1" VerticalAlignment="Stretch">
+                <StackPanel x:Name="SearchContactsStackPanel" local:ContactControl.MouseDown="ContactsStackPanel_MouseDown"/>
             </ScrollViewer>
 
         </Grid>
@@ -52,7 +54,7 @@
 
             <Grid Background="#4C5053">
 
-                <TextBlock Padding="30,10,10,10" Text="Name" Style="{DynamicResource TextStyle}" Grid.ColumnSpan="2"></TextBlock>
+                <TextBlock x:Name="NameTextBlock" Padding="30,10,10,10"  Style="{DynamicResource TextStyle}" Grid.ColumnSpan="2"></TextBlock>
             </Grid>
             <!-- UPPER BAR -->
             <Grid Grid.Row="1" Background="#3B4147">

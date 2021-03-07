@@ -12,7 +12,9 @@ namespace ChatApp.Server.Data
     {
         List<T> SelectAll<T>() where T : IModel, new();
         User SelectOneUser(string username);
+        T SelectOne<T>(int id) where T : IModel, new();
         bool Insert(IModel model);
-        List<(string, ContactStatus)> SelectContacts(int id);
+        List<SharedLib.Models.Contact> SelectContacts(int id);
+        List<SharedLib.Models.Contact> SearchUsers(string name);
     }
 }

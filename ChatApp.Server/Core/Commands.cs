@@ -28,7 +28,7 @@ namespace ChatApp.Server.Core
         internal void GetContacts(MessageToServer receivedMessage, Socket handler)
         {
             MessageFromServer message = new MessageFromServer();
-            message.Usernames = _database.SelectContacts(receivedMessage.Id);
+            message.Users = _database.SelectContacts(receivedMessage.Id);
             handler.Send(message.EncodeMessage());
         }
 
@@ -47,7 +47,14 @@ namespace ChatApp.Server.Core
                 _connectedUsers.Add(receivedMessage.Username, handler);
                 user = new User(receivedMessage.Username, receivedMessage.Password, receivedMessage.Username);
                 _database.Insert(user);
-                Accept(handler);
+                user = _database.SelectOneUser(user.Username);
+                MessageFromServer message = new MessageFromServer()
+                {
+                    Command = CommandFromServer.ACCEPTED,
+                    Id = user.Id,
+                    Name = user.Name
+                };
+                handler.Send(message.EncodeMessage());
             }
         }
 
@@ -59,11 +66,24 @@ namespace ChatApp.Server.Core
                 if (user.Password == receivedMessage.Password)
                 {
                     _connectedUsers.Add(receivedMessage.Username, handler);
-                    Accept(handler);
+                    MessageFromServer message = new MessageFromServer()
+                    {
+                        Command = CommandFromServer.ACCEPTED,
+                        Id = user.Id,
+                        Name = user.Name
+                    };
+                    handler.Send(message.EncodeMessage());
                     return;
                 }
             }
             Reject(handler);
+        }
+
+        internal void SearchContacts(MessageToServer receivedMessage, Socket handler)
+        {
+            MessageFromServer message = new MessageFromServer();
+            message.Users = _database.SearchUsers(receivedMessage.Name);
+            handler.Send(message.EncodeMessage());
         }
 
         internal void Accept(Socket handler)

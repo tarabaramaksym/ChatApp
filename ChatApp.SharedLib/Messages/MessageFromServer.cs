@@ -19,12 +19,15 @@ namespace ChatApp.SharedLib.Messages
         CommandFromServer _command;
         string _newMessage;
         string _fromUsername;
-
-        public List<(string, ContactStatus)> Usernames;
+        int _id;
+        string _name;
+        public List<Models.Contact> Users;
 
         public CommandFromServer Command { get => _command; set => _command = value; }
         public string NewMessage { get => _newMessage; set => _newMessage = value; }
         public string FromUsername { get => _fromUsername; set => _fromUsername = value; }
+        public int Id { get => _id; set => _id = value; }
+        public string Name { get => _name; set => _name = value; }
 
         public byte[] EncodeMessage()
         {

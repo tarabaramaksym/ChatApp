@@ -29,7 +29,7 @@ namespace ChatApp.Server.Core
                     while (true)
                     {
                         try { 
-                            byte[] bytes = new Byte[1024];
+                            byte[] bytes = new Byte[3072];
                             int bytesRec = handler.Receive(bytes);
                             MessageToServer receivedMessage = MessageToServer.DecodeMessage(bytes);
 
@@ -49,6 +49,9 @@ namespace ChatApp.Server.Core
                                     break;
                                 case CommandToServer.SEARCH_CONTACTS:
                                     _commands.SearchContacts(receivedMessage, handler);
+                                    break;
+                                case CommandToServer.GET_MESSAGES:
+                                    _commands.LoadMessages(receivedMessage, handler);
                                     break;
                                 default:
                                     break;

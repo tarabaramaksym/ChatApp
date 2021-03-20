@@ -45,13 +45,14 @@ namespace ChatApp.Gui
             {
                 if (Login.Authenticate(UsernameTextBox.Text, PasswordPasswordBox.Password)){
                     // proceed to the next form
-                    // TODO: Remember Me button
+                    // TODO Remember Me button
                     (this.Parent as ContentControl).Content = new MainChatControl();
                 }
                 else
                 {
-                    // TODO: labels for wrong password/username
-                    MessageBox.Show("Incorrect password or username!");
+                    Storyboard storyBoard = (Storyboard)IncorrectPassOrUsernameLabel.Resources["LabelOpacity"];
+                    Storyboard.SetTarget(storyBoard.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, IncorrectPassOrUsernameLabel);
+                    storyBoard.Begin();
                 }
             }
         }

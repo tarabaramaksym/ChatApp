@@ -21,8 +21,8 @@ namespace ChatApp.SharedLib.Messages
         string _username;
         string _name;
         int _id;
+        int _targetId;
         string _newMessage;
-        string _toUsername;
         
         
 
@@ -31,8 +31,8 @@ namespace ChatApp.SharedLib.Messages
         public string Username { get => _username; set => _username = value; }
         public string Name { get => _name; set => _name = value; }
         public string NewMessage { get => _newMessage; set => _newMessage = value; }
-        public string ToUsername { get => _toUsername; set => _toUsername = value; }
         public int Id { get => _id; set => _id = value; }
+        public int TargetId { get => _targetId; set => _targetId = value; }
 
         public byte[] EncodeMessage()
         {

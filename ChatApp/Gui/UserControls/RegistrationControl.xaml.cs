@@ -52,8 +52,10 @@ namespace ChatApp.Gui
             {
                 if(PasswordPasswordBox.Password != ConfirmPasswordPasswordBox.Password)
                 {
-                    // TODO: When passwords are not the same show it using WPF not MessageBox;
-                    MessageBox.Show("Passwords are not the same!");
+                    ErrorLabel.Content = "Password do not match.";
+                    Storyboard storyBoard = (Storyboard)ErrorLabel.Resources["LabelOpacity"];
+                    Storyboard.SetTarget(storyBoard.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, ErrorLabel);
+                    storyBoard.Begin();
                 }
                 else
                 {
@@ -61,7 +63,10 @@ namespace ChatApp.Gui
                         (this.Parent as ContentControl).Content = new MainChatControl();
                     else
                     {
-                        MessageBox.Show("User with this username already exists!");
+                        ErrorLabel.Content = "User with this username already exists.";
+                        Storyboard storyBoard = (Storyboard)ErrorLabel.Resources["LabelOpacity"];
+                        Storyboard.SetTarget(storyBoard.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, ErrorLabel);
+                        storyBoard.Begin();
                     }
                 }
             }

@@ -10,9 +10,9 @@ namespace ChatApp.Networking
 {
     public static class Client
     {
-        static IPEndPoint _remoteEP;
-        static Socket     _sender;
-        static Requests   _request;
+        static readonly IPEndPoint _remoteEP;
+        static readonly Socket     _sender;
+        static readonly Requests   _request;
 
         const int PORT = 11001;
 
@@ -33,7 +33,7 @@ namespace ChatApp.Networking
         {
             await Task.Run(() =>
             {
-                byte[] bytes = new byte[1024];
+                byte[] bytes = new byte[2048];
                 while (true)
                 {
                     try
@@ -60,7 +60,6 @@ namespace ChatApp.Networking
 
         public static void StartClient()
         {
-            byte[] bytes = new byte[1024];
             try
             {
                 try

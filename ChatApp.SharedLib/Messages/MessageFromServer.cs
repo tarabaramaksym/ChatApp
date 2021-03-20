@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 using ChatApp.SharedLib.Enums;
+using ChatApp.SharedLib.Models;
 
 namespace ChatApp.SharedLib.Messages
 {
@@ -22,6 +23,7 @@ namespace ChatApp.SharedLib.Messages
         int _id;
         string _name;
         public List<Models.Contact> Users;
+        public List<Message> Messages;
 
         public CommandFromServer Command { get => _command; set => _command = value; }
         public string NewMessage { get => _newMessage; set => _newMessage = value; }

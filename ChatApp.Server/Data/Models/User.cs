@@ -24,6 +24,14 @@ namespace ChatApp.Server.Data.Models
             Password = password;
             Name = name;
         }
+
+        public User(string username, string name, int id)
+        {
+            Username = username;
+            Name = name;
+            Id = id;
+        }
+
         public User(string username, string password, string name, int id)
         {
             Username = username;

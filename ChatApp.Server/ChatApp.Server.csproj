@@ -49,6 +49,7 @@
     <Compile Include="Data\MicrosoftSQLServer\Database.cs" />
     <Compile Include="Data\Models\Contact.cs" />
     <Compile Include="Data\Models\IModel.cs" />
+    <Compile Include="Data\Models\Message.cs" />
     <Compile Include="Data\Models\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

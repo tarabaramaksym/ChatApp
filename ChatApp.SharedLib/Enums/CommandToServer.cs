@@ -4,11 +4,9 @@
     {
         ASK_AUTHORIZATION = 0,
         ASK_REGISTRATION,
-        SEND_MESSAGE,
         GET_CONTACTS,
         SEARCH_CONTACTS,
-        NEW_CONTACT,
-        ACCCEPT_CONTACT,
-        REJECT_CONTACT
+        GET_MESSAGES,
+        SEND_MESSAGE,
     }
 }

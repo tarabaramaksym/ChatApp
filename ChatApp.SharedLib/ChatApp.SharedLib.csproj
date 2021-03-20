@@ -43,10 +43,12 @@
   <ItemGroup>
     <Compile Include="Enums\CommandFromServer.cs" />
     <Compile Include="Enums\CommandToServer.cs" />
-    <Compile Include="Enums\ContactStatus.cs" />
+    <Compile Include="Enums\MessageStatus.cs" />
     <Compile Include="Messages\MessageFromServer.cs" />
     <Compile Include="Messages\MessageToServer.cs" />
     <Compile Include="Models\Contact.cs" />
+    <Compile Include="Models\IModel.cs" />
+    <Compile Include="Models\Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

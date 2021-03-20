@@ -111,6 +111,16 @@
             <Button Click="SignInButton_Click" x:Name="SignInButton" Content="Sign In" Foreground="#F0F0F0" FontSize="18" HorizontalAlignment="Left" Margin="50,130,0,0" VerticalAlignment="Top" Width="144" Height="39" Style="{DynamicResource SignInButtonStyle}"/>
             <CheckBox  Foreground="#F0F0F0" Content="Remember Me" HorizontalAlignment="Left" Margin="199,130,0,0" VerticalAlignment="Top" Width="101"/>
             <Button x:Name="SignUpButton" Content="Don't have an account? Sign up" Foreground="#F0F0F0" FontSize="14" Margin="50,203,50,0" VerticalAlignment="Top" Height="39" Style="{DynamicResource LowerButtons}" Click="SignUpButton_Click" />
+            <Label Name="IncorrectPassOrUsernameLabel" Opacity="0" Foreground="#F0F0F0" HorizontalContentAlignment="Center" Content="Incorrect Password or Username." HorizontalAlignment="Left" Margin="50,169,0,0" VerticalAlignment="Top" Width="250" RenderTransformOrigin="0.572,0.385">
+                <Label.Resources>
+                    <Storyboard x:Key="LabelOpacity">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                            <LinearDoubleKeyFrame Value="5" KeyTime="0:0:1"></LinearDoubleKeyFrame>
+                            <LinearDoubleKeyFrame Value="-5" KeyTime="0:0:5"></LinearDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </Label.Resources>
+            </Label>
 
         </Grid>
     </Grid>

@@ -13,12 +13,42 @@ namespace ChatApp.Networking
 {
     public class Requests
     {
-        Socket _sender;
+        readonly Socket _sender;
 
         public Requests(Socket sender)
         {
             _sender = sender;
         }
+
+        internal List<Message> GetMessages(int id)
+        {
+            MessageToServer message = new MessageToServer
+            {
+                Command = CommandToServer.GET_MESSAGES,
+                Id = UserInfo.Id,
+                TargetId = id
+            };
+            byte[] bytes = message.EncodeMessage();
+            _sender.Send(bytes);
+            bytes = new byte[3072];
+            _sender.Receive(bytes);
+            MessageFromServer received = MessageFromServer.DecodeMessage(bytes);
+            return received.Messages;
+        }
+
+        internal void SendMessage(string text, int id)
+        {
+            MessageToServer message = new MessageToServer
+            {
+                Command = CommandToServer.SEND_MESSAGE,
+                Id = UserInfo.Id,
+                TargetId = id,
+                NewMessage = text,
+            };
+            byte[] bytes = message.EncodeMessage();
+            _sender.Send(bytes);
+        }
+
         public bool Authentication(string username, string password)
         {
             MessageToServer message = new MessageToServer
@@ -29,7 +59,7 @@ namespace ChatApp.Networking
             };
             byte[] bytes = message.EncodeMessage();
             _sender.Send(bytes);
-            bytes = new byte[1024];
+            bytes = new byte[3072];
             _sender.Receive(bytes);
             MessageFromServer received = MessageFromServer.DecodeMessage(bytes);
             if (received.Command == CommandFromServer.ACCEPTED)
@@ -55,7 +85,7 @@ namespace ChatApp.Networking
             };
             byte[] bytes = message.EncodeMessage();
             _sender.Send(bytes);
-            bytes = new byte[1024];
+            bytes = new byte[3072];
             _sender.Receive(bytes);
             MessageFromServer received = MessageFromServer.DecodeMessage(bytes);
             if (received.Command == CommandFromServer.ACCEPTED)
@@ -81,7 +111,7 @@ namespace ChatApp.Networking
             };
             byte[] bytes = message.EncodeMessage();
             _sender.Send(bytes);
-            bytes = new byte[1024];
+            bytes = new byte[3072];
             _sender.Receive(bytes);
             MessageFromServer received = MessageFromServer.DecodeMessage(bytes);
             return received.Users;
@@ -95,7 +125,7 @@ namespace ChatApp.Networking
             };
             byte[] bytes = message.EncodeMessage();
             _sender.Send(bytes);
-            bytes = new byte[1024];
+            bytes = new byte[3072];
             _sender.Receive(bytes);
             MessageFromServer received = MessageFromServer.DecodeMessage(bytes);
             return received.Users;

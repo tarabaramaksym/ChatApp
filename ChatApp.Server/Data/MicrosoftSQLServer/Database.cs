@@ -4,13 +4,14 @@ using System.Data.SqlClient;
 using ChatApp.Server.Data.Models;
 using ChatApp.Server.Data;
 using ChatApp.SharedLib.Enums;
+using ChatApp.SharedLib.Messages;
 
 namespace ChatApp.Data.MicrosoftSQLServer
 {
     public class SQLDatabase : IDisposable, IDatabase
     {
-        string        _connectionString;
-        SqlConnection _connection;
+        readonly string        _connectionString;
+        readonly SqlConnection _connection;
         SqlDataReader _reader;
         SqlCommand    _command;
 
@@ -71,21 +72,7 @@ namespace ChatApp.Data.MicrosoftSQLServer
         {
             List<SharedLib.Models.Contact> contacts = new List<SharedLib.Models.Contact>();
 
-            var yourRequestsSQL = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = ReceiverId WHERE SenderId = {id} AND Accepted = 0";
-            var requestsToYouSQL = $"SELECT  u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = SenderId WHERE ReceiverId = {id} AND Accepted = 0";
-            var acceptedContactsSQL = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = ReceiverId WHERE SenderId = {id} AND Accepted = 1";
-
-            GetContacts(yourRequestsSQL, ContactStatus.YOUR_REQUESTS, ref contacts);
-            GetContacts(requestsToYouSQL, ContactStatus.REQUESTS_TO_YOU, ref contacts);
-            GetContacts(acceptedContactsSQL, ContactStatus.ACCEPTED, ref contacts);
-            acceptedContactsSQL = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = SenderId WHERE ReceiverId = {id} AND Accepted = 1";
-            GetContacts(acceptedContactsSQL, ContactStatus.ACCEPTED, ref contacts);
-
-            return contacts;
-        }
-
-        private void GetContacts(string sql,ContactStatus status, ref List<SharedLib.Models.Contact> contacts)
-        {
+            var sql = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = ReceiverId WHERE SenderId = {id} OR ReceiverId = {id}";
             _command = new SqlCommand(sql, _connection);
             _reader = _command.ExecuteReader();
             while (_reader.Read())
@@ -94,8 +81,8 @@ namespace ChatApp.Data.MicrosoftSQLServer
                 c.ParseSqlReader(_reader);
                 contacts.Add(c);
             }
-                
             _reader.Close();
+            return contacts;
         }
 
         public List<SharedLib.Models.Contact> SearchUsers(string name)
@@ -128,6 +115,29 @@ namespace ChatApp.Data.MicrosoftSQLServer
             return obj;
         }
 
+        public List<SharedLib.Models.Message> SelectMessages(int id,int targetId)
+        {
+
+            List<SharedLib.Models.Message> list = new List<SharedLib.Models.Message>();
+            var sql = $"SELECT Message, Datetime, SenderId FROM Messages WHERE (SenderId = {id} AND  ReceiverId = {targetId}) OR (SenderId = {targetId} AND ReceiverId = {id})";
+            _command = new SqlCommand(sql, _connection);
+            _reader = _command.ExecuteReader();
+            while (_reader.Read())
+            {
+                MessageStatus status = MessageStatus.RECEIVER;
+                if (_reader.GetInt32(_reader.GetOrdinal("SenderId")) == id)
+                {
+                    status = MessageStatus.SENDER;
+                }
+                SharedLib.Models.Message message = new SharedLib.Models.Message();
+                message.ParseSqlReader(_reader);
+                message.Status = status;
+                list.Add(message);
+            }
+            _reader.Close();
+            return list;
+        }
+
         private bool _disposed = false;
         public void Dispose() => Dispose(true);
         protected virtual void Dispose(bool disposing)
@@ -143,8 +153,20 @@ namespace ChatApp.Data.MicrosoftSQLServer
             _disposed = true;
         }
 
-        
-
-        
+        public Contact SelectContact(int id1, int id2)
+        {
+            string sql = $"SELECT * FROM Contacts WHERE (SenderId = {id1} AND ReceiverId = {id2}) OR (SenderId = {id2} AND ReceiverId = {id1})";
+            _command = new SqlCommand(sql, _connection);
+            _reader = _command.ExecuteReader();
+            if (_reader.Read())
+            {
+                Contact contact = new Contact();
+                contact.ParseSqlReader(_reader);
+                _reader.Close();
+                return contact;
+            }
+            _reader.Close();
+            return null;
+        }
     }
 }

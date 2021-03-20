@@ -122,8 +122,18 @@
             <Button x:Name="SignUpButton" Content="Sign Up" Foreground="#F0F0F0" FontSize="18" HorizontalAlignment="Left" Margin="140,204,0,0" VerticalAlignment="Top" Width="160" Height="48" Style="{DynamicResource SignInButtonStyle}" Click="SignUpButton_Click"/>
             <Button x:Name="ReturnButton" Content="Return" Foreground="#F0F0F0" FontSize="18" HorizontalAlignment="Left" Margin="50,204,0,0" VerticalAlignment="Top" Width="85" Background="#5BCBCA" Height="48" Style="{DynamicResource SignInButtonStyle}" Click="ReturnButton_Click"/>
 
-
+            <Label Name="ErrorLabel" Opacity="0" Foreground="#F0F0F0" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="50,172,0,0" VerticalAlignment="Top" Width="250" RenderTransformOrigin="0.572,0.385">
+                <Label.Resources>
+                    <Storyboard x:Key="LabelOpacity">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                            <LinearDoubleKeyFrame Value="5" KeyTime="0:0:1"></LinearDoubleKeyFrame>
+                            <LinearDoubleKeyFrame Value="-5" KeyTime="0:0:5"></LinearDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </Label.Resources>
+            </Label>
 
         </Grid>
+        <Label Content="Label" HorizontalAlignment="Left" Margin="-770,-64,0,0" VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

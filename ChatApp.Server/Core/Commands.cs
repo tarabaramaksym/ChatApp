@@ -15,8 +15,8 @@ namespace ChatApp.Server.Core
     class Commands
     {
 
-        private IDatabase _database;
-        private Dictionary<string, Socket> _connectedUsers;
+        private readonly IDatabase _database;
+        private readonly Dictionary<string, Socket> _connectedUsers;
 
         public Commands()
         {
@@ -27,14 +27,20 @@ namespace ChatApp.Server.Core
 
         internal void GetContacts(MessageToServer receivedMessage, Socket handler)
         {
-            MessageFromServer message = new MessageFromServer();
-            message.Users = _database.SelectContacts(receivedMessage.Id);
+            MessageFromServer message = new MessageFromServer
+            {
+                Users = _database.SelectContacts(receivedMessage.Id)
+            };
             handler.Send(message.EncodeMessage());
         }
 
         internal void SendMessage(MessageToServer receivedMessage, Socket handler)
         {
-
+            if(_database.SelectContact(receivedMessage.Id,receivedMessage.TargetId) == null)
+            {
+                _database.Insert(new Contact(receivedMessage.Id, receivedMessage.TargetId));
+            }
+            _database.Insert(new Message(receivedMessage.Id, receivedMessage.TargetId, receivedMessage.NewMessage));
         }
 
         internal void Register(MessageToServer receivedMessage, Socket handler)
@@ -79,10 +85,21 @@ namespace ChatApp.Server.Core
             Reject(handler);
         }
 
+        internal void LoadMessages(MessageToServer receivedMessage, Socket handler)
+        {
+            MessageFromServer message = new MessageFromServer
+            {
+                Messages = _database.SelectMessages(receivedMessage.Id,receivedMessage.TargetId)
+            };
+            handler.Send(message.EncodeMessage());
+        }
+
         internal void SearchContacts(MessageToServer receivedMessage, Socket handler)
         {
-            MessageFromServer message = new MessageFromServer();
-            message.Users = _database.SearchUsers(receivedMessage.Name);
+            MessageFromServer message = new MessageFromServer
+            {
+                Users = _database.SearchUsers(receivedMessage.Name)
+            };
             handler.Send(message.EncodeMessage());
         }
 

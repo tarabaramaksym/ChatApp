@@ -1,4 +1,6 @@
-﻿using ChatApp.Logic;
+﻿using ChatApp.Gui.UserControls;
+using ChatApp.Logic;
+using ChatApp.SharedLib.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +23,11 @@ namespace ChatApp.Gui
     /// </summary>
     public partial class MainChatControl : UserControl
     {
-        ContactControl selected;
+        ContactControl _selected;
         public MainChatControl()
         {
             InitializeComponent();
-            selected = new ContactControl();
+            _selected = new ContactControl();
             SearchTextBox.TextChanged += SearchTextBox_TextChanged;
         }
 
@@ -36,38 +38,21 @@ namespace ChatApp.Gui
 
         private void ContactsStackPanel_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            ContactControl control = e.Source as ContactControl;
-            if(control != null && selected != control)
+            if (e.Source is ContactControl control && _selected != control)
             {
-                // TODO: Load messages
-                selected.Selected = false;
+                _selected.Selected = false;
                 control.Selected = true;
-                selected = control;
-                NameTextBlock.Text = selected.NameTextBlock.Text;
-            }
-        }
+                _selected = control;
+                NameTextBlock.Text = _selected.NameTextBlock.Text;
 
-        private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if(SearchTextBox.Text == "Search")
-            {
-                // TODO: If you are going to type search it's going to delete it on click.
-                // Simple but pretty bad solution is to always remove text on GotFocus including when you already typed something.
-                SearchTextBox.Text = "";
-            }
-        }
-
-        private void SearchTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (SearchTextBox.Text == "")
-            {
-                SearchTextBox.Text = "Search";
+                Chat.LoadMessages(this.MessageStackPanel,(int)_selected.Tag);
             }
         }
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if(SearchTextBox.Text != "" && SearchTextBox.Text != "Search")
+            TextBoxLabel_TextChanged(sender, e);
+            if(SearchTextBox.Text != "")
             {
                 SearchContactsScrollViewer.Visibility = Visibility.Visible;
                 YourContactsScrollViewer.Visibility = Visibility.Hidden;
@@ -77,8 +62,72 @@ namespace ChatApp.Gui
             else
             {
                 SearchContactsScrollViewer.Visibility = Visibility.Hidden;
-                SearchContactsStackPanel.Children.Clear();
                 YourContactsScrollViewer.Visibility = Visibility.Visible;
+                SearchContactsStackPanel.Children.Clear();
+            }
+        }
+
+        private void TextBoxLabel_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if ((sender as TextBox).Name == "ChatTextBox"){
+                if (ChatTextBox.Text != "")
+                {
+                    PlaceholderChatLabel.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    PlaceholderChatLabel.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                if (SearchTextBox.Text != "")
+                {
+                    PlaceholderSearchLabel.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    PlaceholderSearchLabel.Visibility = Visibility.Visible;
+                }
+            }
+            
+        }
+
+        private void TextBoxLabel_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if((sender as TextBox).Name == "ChatTextBox")
+            {
+                PlaceholderChatLabel.Foreground = new SolidColorBrush(Color.FromRgb(97, 97, 97));
+            }
+            else
+            {
+                PlaceholderSearchLabel.Foreground = new SolidColorBrush(Color.FromRgb(97, 97, 97));
+            }
+        }
+
+        private void TextBoxLabel_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if ((sender as TextBox).Name == "ChatTextBox")
+            {
+                PlaceholderChatLabel.Foreground = new SolidColorBrush(Color.FromRgb(213, 213, 213));
+            }
+            else
+            {
+                PlaceholderSearchLabel.Foreground = new SolidColorBrush(Color.FromRgb(213, 213, 213));
+            }
+        }
+
+        private void SendMessage(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                if (ChatTextBox.Text != "" && _selected != null)
+                {
+                    Chat.SendMessage(ChatTextBox.Text, (int)_selected.Tag);
+                    var msg = new MessageControl(MessageStatus.SENDER, ChatTextBox.Text, DateTime.Now);
+                    MessageStackPanel.Children.Add(msg);
+                    Contacts.FillContacts(ContactsStackPanel);
+                }
             }
         }
     }

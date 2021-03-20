@@ -5,7 +5,7 @@ namespace ChatApp.Server.Core
 {
     class Program
     {
-        public static int Main(String[] args)
+        public static int Main()
         {
             Server server = new Server();
             server.StartListening();

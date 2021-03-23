@@ -83,10 +83,9 @@ namespace ChatApp.Server.Core
                 // Bind
                 listener.Bind(endPoint);
 
-                // Only 10 connections
                 listener.Listen(10);
 
-                // Start listening
+                // start listening
                 while (true)
                 {
                     try

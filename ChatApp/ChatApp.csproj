@@ -51,6 +51,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Security\Encryption.cs" />
     <Page Include="Gui\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

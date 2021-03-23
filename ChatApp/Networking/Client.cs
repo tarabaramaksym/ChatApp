@@ -20,10 +20,7 @@ namespace ChatApp.Networking
 
         static Client()
         {
-            // Establish the remote endpoint for the socket.  
-            // This example uses port 11001 on the local computer.  
-            _remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1")/*IPAddress.Parse("178.151.85.223")*/, PORT);
-            // Create a TCP/IP  socket.  
+            _remoteEP = new IPEndPoint(IPAddress.Parse("192.168.1.104")/*IPAddress.Parse("178.151.85.223")*/, PORT);
             _sender = new Socket(_remoteEP.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
             _request = new Requests(_sender);

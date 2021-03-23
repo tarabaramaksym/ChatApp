@@ -12,6 +12,11 @@
             <fa:ImageAwesome Foreground="White"  HorizontalAlignment="Left" Margin="12,14,0,14" Width="23" Icon="User"/>
             <TextBlock Name="NameTextBlock" FontSize="16" Foreground="#F0F0F0" Text="Name" HorizontalAlignment="Left" Margin="44,6,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
             <TextBlock Name="UsernameTextBlock" FontSize="12" Foreground="#F0F0F0" Text="Username" HorizontalAlignment="Left" Margin="50,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+            <Grid Visibility="Hidden" Name="NewMessage" Margin="125,3,2,29">
+                <Ellipse Fill="#00B2B0" Stroke="Transparent" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Name="NewMessagesCounter" Foreground="White" Text="0" Width="Auto" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="6,0,6,2"/>
+            </Grid>
+
         </Grid>
     </Grid>
 </UserControl>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChatApp.Networking;
+using ChatApp.Security;
 
 namespace ChatApp.Logic
 {
@@ -12,7 +13,8 @@ namespace ChatApp.Logic
 
         public static bool Authenticate(string username,string password)
         {
-            if(Client.Request.Authentication(username, password))
+            var encryption = new Encryption();
+            if(Client.Request.Authentication(username,encryption.Encrypt(password)))
             {
                 UserInfo.Username = username;
                 return true;
@@ -22,7 +24,8 @@ namespace ChatApp.Logic
 
         public static bool Register(string username,string password)
         {
-            return Client.Request.Registration(username, password);
+            var encryption = new Encryption();
+            return Client.Request.Registration(username, encryption.Encrypt(password));
         }
 
     }

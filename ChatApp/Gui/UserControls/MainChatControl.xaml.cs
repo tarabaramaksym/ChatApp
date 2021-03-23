@@ -27,7 +27,6 @@ namespace ChatApp.Gui
         public MainChatControl()
         {
             InitializeComponent();
-            _selected = new ContactControl();
             SearchTextBox.TextChanged += SearchTextBox_TextChanged;
         }
 
@@ -40,6 +39,10 @@ namespace ChatApp.Gui
         {
             if (e.Source is ContactControl control && _selected != control)
             {
+                if(_selected == null)
+                {
+                    _selected = new ContactControl();
+                }
                 _selected.Selected = false;
                 control.Selected = true;
                 _selected = control;
@@ -127,6 +130,7 @@ namespace ChatApp.Gui
                     var msg = new MessageControl(MessageStatus.SENDER, ChatTextBox.Text, DateTime.Now);
                     MessageStackPanel.Children.Add(msg);
                     Contacts.FillContacts(ContactsStackPanel);
+                    ChatTextBox.Text = "";
                 }
             }
         }

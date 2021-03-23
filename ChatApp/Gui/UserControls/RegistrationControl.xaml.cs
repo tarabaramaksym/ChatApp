@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,32 +31,25 @@ namespace ChatApp.Gui
         private void SignUpButton_Click(object sender, RoutedEventArgs e)
         {
             if (UsernameTextBox.Text == "")
-            {
-                Storyboard shake = (Storyboard)UsernameTextBox.Resources["TextBoxShakeStoryboard"];
-                Storyboard.SetTarget(shake.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, UsernameTextBox);
-                shake.Begin();
-            }
+                ShakeUsernameTextBox();
             if (PasswordPasswordBox.Password == "")
-            {
-                Storyboard shake = (Storyboard)PasswordPasswordBox.Resources["PasswordBoxShakeStoryboard"];
-                Storyboard.SetTarget(shake.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, PasswordPasswordBox);
-                shake.Begin();
-            }
+                ShakePasswordPasswordBox();   
             if(ConfirmPasswordPasswordBox.Password == "")
-            {
-                Storyboard shake = (Storyboard)PasswordPasswordBox.Resources["PasswordBoxShakeStoryboard"];
-                Storyboard.SetTarget(shake.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, ConfirmPasswordPasswordBox);
-                shake.Begin();
-            }
+                ShakeConfirmPasswordPasswordBox();
 
             if (PasswordPasswordBox.Password != "" && UsernameTextBox.Text != "" && ConfirmPasswordPasswordBox.Password != "")
             {
                 if(PasswordPasswordBox.Password != ConfirmPasswordPasswordBox.Password)
                 {
-                    ErrorLabel.Content = "Password do not match.";
-                    Storyboard storyBoard = (Storyboard)ErrorLabel.Resources["LabelOpacity"];
-                    Storyboard.SetTarget(storyBoard.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, ErrorLabel);
-                    storyBoard.Begin();
+                    AnimateErrorMessage("Password do not match.");
+                }
+                else if(PasswordPasswordBox.Password.Length <= 8)
+                {
+                    AnimateErrorMessage("Password needs to be at least 8 symbols long.");
+                }
+                else if(Regex.Match(PasswordPasswordBox.Password, @"[^\u0000-\u024F]+", RegexOptions.None).Success)
+                {
+                    AnimateErrorMessage("Use only latin/numbers/special symbols.");
                 }
                 else
                 {
@@ -63,14 +57,39 @@ namespace ChatApp.Gui
                         (this.Parent as ContentControl).Content = new MainChatControl();
                     else
                     {
-                        ErrorLabel.Content = "User with this username already exists.";
-                        Storyboard storyBoard = (Storyboard)ErrorLabel.Resources["LabelOpacity"];
-                        Storyboard.SetTarget(storyBoard.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, ErrorLabel);
-                        storyBoard.Begin();
+                        AnimateErrorMessage("User with this username already exists.");
                     }
                 }
             }
         }
+
+        private void ShakePasswordPasswordBox()
+        {
+            Storyboard shake = (Storyboard)PasswordPasswordBox.Resources["PasswordBoxShakeStoryboard"];
+            Storyboard.SetTarget(shake.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, PasswordPasswordBox);
+            shake.Begin();
+        }
+        private void ShakeConfirmPasswordPasswordBox()
+        {
+            Storyboard shake = (Storyboard)PasswordPasswordBox.Resources["PasswordBoxShakeStoryboard"];
+            Storyboard.SetTarget(shake.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, ConfirmPasswordPasswordBox);
+            shake.Begin();
+        }
+        private void ShakeUsernameTextBox()
+        {
+            Storyboard shake = (Storyboard)UsernameTextBox.Resources["TextBoxShakeStoryboard"];
+            Storyboard.SetTarget(shake.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, UsernameTextBox);
+            shake.Begin();
+
+        }
+        private void AnimateErrorMessage(string message)
+        {
+            ErrorLabel.Content = message;
+            Storyboard storyBoard = (Storyboard)ErrorLabel.Resources["LabelOpacity"];
+            Storyboard.SetTarget(storyBoard.Children.ElementAt(0) as DoubleAnimationUsingKeyFrames, ErrorLabel);
+            storyBoard.Begin();
+        }
+
         private void ReturnButton_Click(object sender, RoutedEventArgs e)
         {
             (this.Parent as ContentControl).Content = new LoginControl();

@@ -70,9 +70,12 @@ namespace ChatApp.Data.MicrosoftSQLServer
 
         public List<SharedLib.Models.Contact> SelectContacts(int id)
         {
+
+
+            // TODO: DRY
             List<SharedLib.Models.Contact> contacts = new List<SharedLib.Models.Contact>();
 
-            var sql = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = ReceiverId WHERE SenderId = {id} OR ReceiverId = {id}";
+            var sql = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = ReceiverId WHERE SenderId = {id}";
             _command = new SqlCommand(sql, _connection);
             _reader = _command.ExecuteReader();
             while (_reader.Read())
@@ -82,6 +85,18 @@ namespace ChatApp.Data.MicrosoftSQLServer
                 contacts.Add(c);
             }
             _reader.Close();
+
+            sql = $"SELECT u.Id, u.Name,u.Username FROM Contacts LEFT JOIN Users u ON u.Id = SenderId WHERE ReceiverId = {id}";
+            _command = new SqlCommand(sql, _connection);
+            _reader = _command.ExecuteReader();
+            while (_reader.Read())
+            {
+                var c = new SharedLib.Models.Contact();
+                c.ParseSqlReader(_reader);
+                contacts.Add(c);
+            }
+            _reader.Close();
+
             return contacts;
         }
 
